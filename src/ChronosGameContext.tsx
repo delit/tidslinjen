@@ -140,8 +140,10 @@ type ChronosContextValue = {
   setQuestionTimerEnabled: (enabled: boolean) => void;
   questionTimerSeconds: number;
   setQuestionTimerSeconds: (seconds: number) => void;
-  /** Vid timeout: samma som fel placering; returnerar kort för fel-overlay om shake körs. */
+  /** Vid timeout: samma som fel placering; returnerar kort för fel-overlay. */
   expireQuestionTimer: () => EventCard | null;
+  /** Efter fel-overlay när sista livet gick: gå till Game Over-skärmen. */
+  finalizeLossAfterWrongOverlay: () => void;
   /** Dagens utmaning: tvingad timer oberoende av inställningar. */
   effectiveQuestionTimerEnabled: boolean;
   effectiveQuestionTimerSeconds: number;
@@ -218,17 +220,18 @@ export function ChronosGameProvider({ children }: { children: ReactNode }) {
     const card = s.pending;
     playWrong();
     setAnnouncer("Tiden är slut.");
-    if (s.lives === 0) {
-      dispatch({ type: "END_GAME", won: false });
-      return null;
-    }
     const hadAtLeastTwoLives = s.lives >= 2;
     dispatch({ type: "WRONG_FEEDBACK" });
     if (hadAtLeastTwoLives) {
       setWrongDockAnimPhase("shake");
-      return card;
     }
-    return null;
+    return card;
+  }, []);
+
+  const finalizeLossAfterWrongOverlay = useCallback(() => {
+    const s = stateRef.current;
+    if (s.screen !== "game" || s.lives !== 0 || s.won === true) return;
+    dispatch({ type: "END_GAME", won: false });
   }, []);
 
   const gameSessionStartMsRef = useRef(0);
@@ -483,11 +486,6 @@ export function ChronosGameProvider({ children }: { children: ReactNode }) {
     playWrong();
     setAnnouncer("Fel plats.");
 
-    if (s.lives === 0) {
-      dispatch({ type: "END_GAME", won: false });
-      return false;
-    }
-
     dispatch({ type: "WRONG_FEEDBACK" });
     if (s.lives > 1) {
       setWrongDockAnimPhase("shake");
@@ -581,6 +579,7 @@ export function ChronosGameProvider({ children }: { children: ReactNode }) {
       questionTimerSeconds,
       setQuestionTimerSeconds,
       expireQuestionTimer,
+      finalizeLossAfterWrongOverlay,
       effectiveQuestionTimerEnabled,
       effectiveQuestionTimerSeconds,
       dailyIntroOpen,
@@ -617,6 +616,7 @@ export function ChronosGameProvider({ children }: { children: ReactNode }) {
       questionTimerSeconds,
       setQuestionTimerSeconds,
       expireQuestionTimer,
+      finalizeLossAfterWrongOverlay,
       effectiveQuestionTimerEnabled,
       effectiveQuestionTimerSeconds,
       dailyIntroOpen,

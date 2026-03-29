@@ -106,6 +106,7 @@ export function GameScreen() {
     effectiveQuestionTimerEnabled,
     effectiveQuestionTimerSeconds,
     expireQuestionTimer,
+    finalizeLossAfterWrongOverlay,
   } = useChronosGame();
 
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -263,13 +264,14 @@ export function GameScreen() {
     const hideT = window.setTimeout(() => {
       setWrongOverlay(null);
       setWrongOverlayExiting(false);
+      finalizeLossAfterWrongOverlay();
     }, 2800);
     return () => {
       window.clearTimeout(showT);
       window.clearTimeout(hideT);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wrongOverlay?.event, wrongOverlay?.dropY]);
+  }, [wrongOverlay?.event, wrongOverlay?.dropY, finalizeLossAfterWrongOverlay]);
 
   useEffect(() => {
     if (state.screen !== "game") {
@@ -1025,7 +1027,7 @@ export function GameScreen() {
             key={`wrong-${wrongOverlay.event}`}
             className="pointer-events-none fixed left-1/2 z-[95] w-full max-w-[460px] -translate-x-1/2 px-6"
             style={{ top: wrongOverlay.dropY - 90 }}
-            initial={{ opacity: 0, scale: 0.82, y: 12 }}
+            initial={{ opacity: 0, scale: 0.86, y: 10 }}
             animate={
               wrongOverlayExiting
                 ? { opacity: 0, scale: 0.94, y: -14 }
@@ -1034,7 +1036,7 @@ export function GameScreen() {
             transition={
               wrongOverlayExiting
                 ? { duration: 0.3, ease: [0.4, 0, 1, 1] }
-                : { type: "spring", stiffness: 420, damping: 30 }
+                : { type: "spring", stiffness: 560, damping: 34 }
             }
           >
             {/* Shake-wrapper: FEL-badge + kortets kropp skakar tillsammans */}
@@ -1045,7 +1047,7 @@ export function GameScreen() {
                   ? {}
                   : { x: [0, -11, 11, -8, 8, -5, 5, -2, 2, 0] }
               }
-              transition={{ duration: 0.55, delay: 0.18, ease: "easeOut" }}
+              transition={{ duration: 0.5, delay: 0.06, ease: "easeOut" }}
             >
               {/* FEL-badge – sitter ovanpå kortet, skakar med */}
               <div className="absolute left-1/2 top-0 z-20 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full bg-coral px-4 py-1.5 shadow-lg">

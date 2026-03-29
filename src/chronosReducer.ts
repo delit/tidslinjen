@@ -160,7 +160,8 @@ export function chronosReducer(
           pending: null,
           lives: 0,
           wrongPulse: state.wrongPulse + 1,
-          screen: "over",
+          /** Game Over visas efter fel-overlayn (samma som vid andra fel) — inte direkt. */
+          screen: "game",
           won: false,
           lastWrongCard: p,
         };

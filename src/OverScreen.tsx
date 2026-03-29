@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Home, Loader2, RotateCcw } from "lucide-react";
 import { useChronosGame } from "./ChronosGameContext";
-import { formatYear } from "./gameEngine";
 import { playClick } from "./sound";
 import {
   fetchDailyLeaderboard,
@@ -112,7 +111,7 @@ export function OverScreen() {
         )}
         <p className="text-slate-300 mb-2 font-medium text-lg">
           Poäng:{" "}
-          <span className="text-white font-headline font-bold">
+          <span className="font-headline font-bold text-coral">
             {state.score}
           </span>
         </p>
@@ -123,13 +122,6 @@ export function OverScreen() {
         ) : won && isDaily ? (
           <p className="text-slate-400 mb-6 font-medium text-sm">
             Du klarade alla kort.
-          </p>
-        ) : state.lastWrongCard ? (
-          <p className="text-slate-400 mb-6 font-medium text-sm">
-            Rätt årtal på kortet:{" "}
-            <span className="text-coral font-semibold">
-              {formatYear(state.lastWrongCard.year)}
-            </span>
           </p>
         ) : (
           <div className="mb-6" aria-hidden />

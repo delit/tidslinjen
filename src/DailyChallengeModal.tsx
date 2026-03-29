@@ -105,7 +105,7 @@ export function DailyChallengeModal({
 
         {panel === "leaderboard" ? (
           <div className="min-h-0 flex-1 overflow-y-auto scrollbar-hide pb-2">
-            <p className="text-center text-[13px] text-slate-500 mb-4 capitalize">
+            <p className="text-left text-[13px] text-slate-500 mb-4 capitalize">
               {dateTitle}
             </p>
             {leaderboardLoading ? (
@@ -145,10 +145,11 @@ export function DailyChallengeModal({
         ) : (
           <div className="min-h-0 flex-1 overflow-y-auto scrollbar-hide pb-2">
             <p className="text-left text-[15px] leading-relaxed text-slate-300 sm:text-base mb-5">
-              Alla som spelar{" "}
-              <span className="text-white font-headline font-semibold">samma dag</span>{" "}
-              får samma blandning av frågor. Du spelar tills dina liv är slut. Lyckas du
-              hamna på topplistan?
+              Alla som spelar i dag{" "}
+              <span className="text-white font-headline font-semibold">
+                får samma frågor
+              </span>
+              . Du spelar tills dina liv är slut. Lyckas du hamna på topplistan?
             </p>
 
             <div className="mb-6 grid grid-cols-2 gap-3">
