@@ -1,0 +1,3 @@
+export const DAILY_CHALLENGE_LIVES = 5;
+export const DAILY_CHALLENGE_TIMER_SECONDS = 20;
+export const DAILY_PLAYER_NAME_MAX = 15;

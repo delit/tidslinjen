@@ -1,0 +1,6 @@
+{
+  "name": "Tidslinjen",
+  "description": "Tidslinjen som React-app: Vite 6, React 19, Tailwind v4, samma spelregler som vanilla game.js.",
+  "implementation": "src/main.tsx",
+  "requestFramePermissions": []
+}
