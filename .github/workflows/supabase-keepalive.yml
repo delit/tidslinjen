@@ -1,0 +1,42 @@
+# Håller Supabase free-tier-projektet aktivt genom regelbunden API-trafik
+# (undviker automatisk paus efter ~7 dagars inaktivitet).
+#
+# Krävs i GitHub: Repo → Settings → Secrets and variables → Actions → New repository secret
+#   SUPABASE_URL      = https://<projekt-ref>.supabase.co  (utan avslutande /)
+#   SUPABASE_ANON_KEY = samma publishable/anon-nyckel som i VITE_SUPABASE_ANON_KEY
+#
+# Kör också manuellt: Actions → "Supabase keepalive" → Run workflow
+
+name: Supabase keepalive
+
+on:
+  schedule:
+    # Varje dag 12:00 UTC — långt under Supabase 7-dagarsgräns
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          set -e
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::error::Saknar secrets SUPABASE_URL eller SUPABASE_ANON_KEY. Lägg till under repo Settings → Secrets."
+            exit 1
+          fi
+          base="${SUPABASE_URL%/}"
+          code=$(curl -sS -o /dev/null -w "%{http_code}" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            "${base}/rest/v1/") || exit 1
+          echo "REST /rest/v1/ → HTTP ${code}"
+          if [ -z "$code" ] || [ "$code" = "000" ]; then
+            echo "::error::Inget svar från Supabase"
+            exit 1
+          fi
+          echo "Keepalive OK (trafik mot projektet registrerad)"
