@@ -4,10 +4,43 @@ import path from 'path';
 import {defineConfig, loadEnv} from 'vite';
 import {VitePWA} from 'vite-plugin-pwa';
 
+const PWA_ICON_SIZES = [
+  '48x48',
+  '72x72',
+  '96x96',
+  '128x128',
+  '144x144',
+  '152x152',
+  '192x192',
+  '256x256',
+  '384x384',
+  '512x512',
+] as const;
+
+function publicAsset(base: string, relativePath: string): string {
+  return `${base}${relativePath}`.replace(/\/{2,}/g, '/');
+}
+
 export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
   /** Lokalt: /. GitHub Pages (delit.github.io/tidslinjen/): sätt VITE_BASE_PATH=/tidslinjen/ vid build. */
   const base = env.VITE_BASE_PATH || '/';
+
+  const pwaManifestIcons = [
+    ...PWA_ICON_SIZES.map((sizes) => ({
+      src: publicAsset(base, `img/pwa/icons/icon-${sizes}.png`),
+      sizes,
+      type: 'image/png' as const,
+      purpose: 'any' as const,
+    })),
+    {
+      src: publicAsset(base, 'img/pwa/icons/icon-512x512.png'),
+      sizes: '512x512',
+      type: 'image/png' as const,
+      purpose: 'maskable' as const,
+    },
+  ];
+
   return {
     base,
     plugins: [
@@ -16,7 +49,15 @@ export default defineConfig(({mode}) => {
       VitePWA({
         registerType: 'autoUpdate',
         injectRegister: false,
-        includeAssets: ['pwa-icon-512.png'],
+        includeAssets: [
+          'img/favicon/favicon.ico',
+          'img/favicon/favicon-16x16.png',
+          'img/favicon/favicon-32x32.png',
+          'img/favicon/apple-touch-icon.png',
+          'img/favicon/android-chrome-192x192.png',
+          'img/favicon/android-chrome-512x512.png',
+          ...PWA_ICON_SIZES.map((s) => `img/pwa/icons/icon-${s}.png`),
+        ],
         manifest: {
           name: 'Tidslinjen',
           short_name: 'Tidslinjen',
@@ -28,26 +69,7 @@ export default defineConfig(({mode}) => {
           start_url: base,
           scope: base,
           lang: 'sv',
-          icons: [
-            {
-              src: `${base}pwa-icon-512.png`.replace(/\/{2,}/g, '/'),
-              sizes: '192x192',
-              type: 'image/png',
-              purpose: 'any',
-            },
-            {
-              src: `${base}pwa-icon-512.png`.replace(/\/{2,}/g, '/'),
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'any',
-            },
-            {
-              src: `${base}pwa-icon-512.png`.replace(/\/{2,}/g, '/'),
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'maskable',
-            },
-          ],
+          icons: pwaManifestIcons,
         },
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,webmanifest}'],
