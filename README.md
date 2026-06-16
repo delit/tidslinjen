@@ -4,6 +4,19 @@ Ett **tidslinjespel** på svenska: du får frågor om händelser utan synligt å
 
 **Version** anges i `package.json` och visas i appen under **Inställningar** (längst ned).
 
+## Skärmdumpar
+
+<table>
+  <tr>
+    <td width="50%"><img src="public/img/scr/01.png" alt="Skärmdump 01" width="100%" /></td>
+    <td width="50%"><img src="public/img/scr/02.png" alt="Skärmdump 02" width="100%" /></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="public/img/scr/03.png" alt="Skärmdump 03" width="100%" /></td>
+    <td width="50%"><img src="public/img/scr/04.png" alt="Skärmdump 04" width="100%" /></td>
+  </tr>
+</table>
+
 ---
 
 ## Så fungerar spelet
