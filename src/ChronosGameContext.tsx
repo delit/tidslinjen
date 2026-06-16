@@ -21,6 +21,7 @@ import {
   eventKey,
   isPlacementCorrect,
   loadAllEvents,
+  preloadAllEvents,
   pickAnchor,
   pickAnchorSeeded,
 } from "./gameEngine";
@@ -203,6 +204,10 @@ export function ChronosGameProvider({ children }: { children: ReactNode }) {
   const [questionTimerSeconds, setQuestionTimerSecondsState] = useState(
     () => loadTimerSeconds()
   );
+
+  useEffect(() => {
+    preloadAllEvents();
+  }, []);
 
   const setQuestionTimerEnabled = useCallback((enabled: boolean) => {
     saveTimerEnabled(enabled);

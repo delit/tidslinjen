@@ -100,20 +100,57 @@ export function parseCSV(text: string): EventCard[] {
   return rows;
 }
 
+let cachedEvents: EventCard[] | null = null;
+let loadEventsPromise: Promise<EventCard[]> | null = null;
+
+function resolveCsvUrl(relativePath: string): string {
+  const base = import.meta.env.BASE_URL ?? "/";
+  return `${base}${relativePath}`;
+}
+
+async function fetchAllEventsFromNetwork(): Promise<EventCard[]> {
+  const results = await Promise.all(
+    CSV_FILES_2026.map(async (relativePath) => {
+      try {
+        const res = await fetch(resolveCsvUrl(relativePath));
+        if (!res.ok) return [] as EventCard[];
+        const text = await res.text();
+        return parseCSV(text);
+      } catch {
+        return [] as EventCard[];
+      }
+    })
+  );
+  return results.flat();
+}
+
+/** Startar CSV-laddning i bakgrunden (t.ex. vid appstart). Idempotent. */
+export function preloadAllEvents(): void {
+  void loadAllEvents();
+}
+
+/** Returnerar cachade frågor om de finns; annars hämtar (parallellt) och cachar. */
 export async function loadAllEvents(): Promise<EventCard[]> {
-  const all: EventCard[] = [];
-  // Ladda enbart de nya 2026-filerna (ersätter de gamla)
-  for (const path of CSV_FILES_2026) {
-    try {
-      const res = await fetch(path);
-      if (!res.ok) continue;
-      const text = await res.text();
-      all.push(...parseCSV(text));
-    } catch {
-      /* nätverk / fil */
-    }
+  if (cachedEvents !== null) {
+    return cachedEvents;
   }
-  return all;
+  if (!loadEventsPromise) {
+    loadEventsPromise = fetchAllEventsFromNetwork()
+      .then((events) => {
+        cachedEvents = events;
+        return events;
+      })
+      .finally(() => {
+        loadEventsPromise = null;
+      });
+  }
+  return loadEventsPromise;
+}
+
+/** Töm cache (t.ex. vid utveckling); nästa loadAllEvents hämtar om. */
+export function clearEventsCache(): void {
+  cachedEvents = null;
+  loadEventsPromise = null;
 }
 
 function shuffleInPlace<T>(arr: T[]): T[] {
