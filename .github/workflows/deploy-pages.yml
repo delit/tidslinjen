@@ -1,6 +1,10 @@
 # Bygger Vite-appen och publicerar dist/ till GitHub Pages.
 # Aktivera: Repo → Settings → Pages → Source: GitHub Actions
 # URL: https://delit.github.io/tidslinjen/
+#
+# Supabase (topplista): lägg minst ett par under Settings → Secrets → Actions
+#   VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY  (rekommenderat)
+#   eller SUPABASE_URL + SUPABASE_ANON_KEY       (samma värden som keepalive)
 
 name: Deploy GitHub Pages
 
@@ -21,6 +25,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
     steps:
       - uses: actions/checkout@v4
 
@@ -32,12 +38,16 @@ jobs:
       - run: npm ci
 
       - name: Build for GitHub Pages
-        run: npm run build
+        run: |
+          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_ANON_KEY" ]; then
+            echo "::error::Supabase saknas i bygget. Lägg till repository secrets VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY (eller SUPABASE_URL + SUPABASE_ANON_KEY) under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          npm run build
         env:
-          # Måste matcha repots namn under delit.github.io/<repo>/
           VITE_BASE_PATH: /tidslinjen/
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || secrets.SUPABASE_ANON_KEY }}
 
       - uses: actions/upload-pages-artifact@v3
         with:

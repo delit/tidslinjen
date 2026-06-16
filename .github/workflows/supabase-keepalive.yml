@@ -3,7 +3,8 @@
 #
 # Krävs i GitHub: Repo → Settings → Secrets and variables → Actions → New repository secret
 #   SUPABASE_URL      = https://<projekt-ref>.supabase.co  (utan avslutande /)
-#   SUPABASE_ANON_KEY = samma publishable/anon-nyckel som i VITE_SUPABASE_ANON_KEY
+#   SUPABASE_ANON_KEY = publishable/anon-nyckel från Dashboard → API
+# Deploy-workflowen använder samma par om VITE_SUPABASE_* saknas (topplista i appen).
 #
 # Kör också manuellt: Actions → "Supabase keepalive" → Run workflow
 
