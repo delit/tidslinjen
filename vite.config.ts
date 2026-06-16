@@ -6,7 +6,10 @@ import {VitePWA} from 'vite-plugin-pwa';
 
 export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
+  /** Lokalt: /. GitHub Pages (delit.github.io/tidslinjen/): sätt VITE_BASE_PATH=/tidslinjen/ vid build. */
+  const base = env.VITE_BASE_PATH || '/';
   return {
+    base,
     plugins: [
       react(),
       tailwindcss(),
@@ -22,24 +25,24 @@ export default defineConfig(({mode}) => {
           background_color: '#0c1222',
           display: 'standalone',
           orientation: 'portrait',
-          start_url: '/',
-          scope: '/',
+          start_url: base,
+          scope: base,
           lang: 'sv',
           icons: [
             {
-              src: '/pwa-icon-512.png',
+              src: `${base}pwa-icon-512.png`.replace(/\/{2,}/g, '/'),
               sizes: '192x192',
               type: 'image/png',
               purpose: 'any',
             },
             {
-              src: '/pwa-icon-512.png',
+              src: `${base}pwa-icon-512.png`.replace(/\/{2,}/g, '/'),
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any',
             },
             {
-              src: '/pwa-icon-512.png',
+              src: `${base}pwa-icon-512.png`.replace(/\/{2,}/g, '/'),
               sizes: '512x512',
               type: 'image/png',
               purpose: 'maskable',
@@ -64,7 +67,7 @@ export default defineConfig(({mode}) => {
             {
               urlPattern: ({request, url}) =>
                 request.method === 'GET' &&
-                (url.pathname.startsWith('/csv_2026/') || url.pathname.startsWith('/csv/')),
+                (url.pathname.includes('/csv_2026/') || url.pathname.includes('/csv/')),
               handler: 'NetworkFirst',
               options: {
                 cacheName: 'csv-questions',
