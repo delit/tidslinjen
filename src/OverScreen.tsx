@@ -8,7 +8,7 @@ import {
   submitDailyScore,
   type DailyLeaderboardRow,
 } from "./dailyChallengeApi";
-import { isSupabaseConfigured } from "./supabaseClient";
+import { getSupabaseConfigMessage, isSupabaseConfigured } from "./supabaseClient";
 import { DAILY_PLAYER_NAME_MAX } from "./dailyChallengeConstants";
 
 export function OverScreen() {
@@ -142,7 +142,7 @@ export function OverScreen() {
             </div>
             {!isSupabaseConfigured() && (
               <p className="text-xs text-amber-200/90 mb-3">
-                Topplistan kräver Supabase (VITE_SUPABASE_URL och ANON-nyckel).
+                {getSupabaseConfigMessage()}
               </p>
             )}
             {leaderboard.length === 0 && !leaderboardLoading ? (

@@ -76,7 +76,7 @@ Kopiera `.env.example` till **`.env.local`** (läs in av Vite) och fyll i det du
 | Variabel | Syfte |
 |----------|--------|
 | `VITE_SUPABASE_URL` | Supabase-projekt-URL (topplista daglig utmaning) |
-| `VITE_SUPABASE_ANON_KEY` | **Publishable/anon-nyckel** — aldrig `service_role` i `VITE_*` |
+| `VITE_SUPABASE_ANON_KEY` | **Publishable/anon-nyckel** från Dashboard → API — **inte** Project URL, aldrig `service_role` |
 | `VITE_FORCE_DIRECT_DAILY_INSERT` | `true` = hoppa över Edge Function och skriv direkt till tabell (endast för felsökning) |
 | `GEMINI_API_KEY` | Reserverad i config; spelet använder den inte i nuläget |
 | `APP_URL` | Reserverad för ev. hosting/OAuth |
