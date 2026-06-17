@@ -18,8 +18,17 @@ export function isLikelyServiceRoleKey(key: string): boolean {
   return false;
 }
 
+/** Project URL utan /rest/v1/ eller avslutande /. */
+export function normalizeSupabaseProjectUrl(url: string): string {
+  let u = url.trim();
+  if (!u) return u;
+  u = u.replace(/\/rest\/v1\/?$/i, "");
+  u = u.replace(/\/+$/, "");
+  return u;
+}
+
 export function isValidSupabaseProjectUrl(url: string): boolean {
-  const u = url.trim();
+  const u = normalizeSupabaseProjectUrl(url);
   if (!u.startsWith("https://")) return false;
   try {
     const host = new URL(u).hostname;

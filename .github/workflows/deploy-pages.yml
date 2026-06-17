@@ -54,6 +54,8 @@ jobs:
               exit 1
               ;;
           esac
+          VITE_SUPABASE_URL="${VITE_SUPABASE_URL%/}"
+          VITE_SUPABASE_URL="${VITE_SUPABASE_URL%/rest/v1}"
           npm run build
         env:
           VITE_BASE_PATH: /tidslinjen/
